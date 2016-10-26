@@ -1,0 +1,84 @@
+#c = 0;
+$menu[#c] = "&1.URLエスケープ";
+$scrp[#c] = "ruby -e \"require 'kconv';require 'cgi';print CGI.escape(Kconv.toutf8(gets(nil)))\" <con >con";
+
+#c = #c + 1;
+$menu[#c] = "&2.URLアンエスケープ";
+$scrp[#c] = "ruby -e \"require 'kconv';require 'cgi';print CGI.unescape(gets(nil)).tosjis\" <con >con";
+
+#c = #c + 1;
+$menu[#c] = "\x01";
+
+#c = #c + 1;
+$menu[#c] = "&3.HTMLエスケープ";
+$scrp[#c] = "ruby -e \"require 'cgi';print CGI.escapeHTML(gets(nil))\" <con >con";
+
+#c = #c + 1;
+$menu[#c] = "&4.HTMLアンエスケープ";
+$scrp[#c] = "ruby -e \"require 'cgi';print CGI.unescapeHTML(gets(nil))\" <con >con";
+
+#c = #c + 1;
+$menu[#c] = "\x01";
+
+#c = #c + 1;
+$menu[#c] = "&5.ダブルクォートエスケープ";
+$scrp[#c] = "ruby -e \x22print gets(nil).gsub(/\\n/,'').gsub(/\x5c\x22/,'\x5c\x5c\x5c\x22')\x22 <con >con";
+
+#c = #c + 1;
+$menu[#c] = "&6.ダブルクォートエスケープ(JSON)";
+$scrp[#c] = "ruby -e \x22require 'json';print JSON.generate(JSON.parse(gets(nil))).gsub(/\\n/,'').gsub(/\x5c\x22/,'\x5c\x5c\x5c\x22')\x22 <con >con";
+
+#c = #c + 1;
+$menu[#c] = "\x01";
+
+#c = #c + 1;
+$menu[#c] = "&7.HTML整形";
+$scrp[#c] = "ruby -e \"require 'cgi';print CGI.pretty(gets(nil))\" <con >con";
+
+#c = #c + 1;
+$menu[#c] = "&8.JSON整形(Ruby1.9以降)";
+$scrp[#c] = "ruby -e \"require 'nkf';require 'json';print NKF.nkf('-W -s', JSON.pretty_generate(JSON.parse(gets(nil).gsub(/\\n/,''))))\" <con >con";
+
+#c = #c + 1;
+$menu[#c] = "&9.XML整形(Ruby)";
+$scrp[#c] = "ruby -e \x22require 'rexml/document';xml = REXML::Document.new(gets(nil));formatter = REXML::Formatters::Pretty.new;puts formatter.write(xml.root,'');\x22  <con >con";
+
+#c = #c + 1;
+$menu[#c] = "\x01";
+
+#c = #c + 1;
+$menu[#c] = "&a.Base64デコード(safe url)";
+$scrp[#c] = "ruby -e \"require 'base64';str=gets(nil).gsub('-','+').gsub('_','/');i=3-str.length%3;if(i<3) then i.times {str+='=';} end;print Base64.decode64(str);\" <con >con";
+
+#c = #c + 1;
+$menu[#c] = "\x01";
+
+#c = #c + 1;
+$menu[#c] = "&b.日付変換";
+$scrp[#c] = "ruby -e \"print Time.at(gets(nil).to_i/1000);\" <con >con";
+
+#c = #c + 1;
+$menu[#c] = "\x01";
+
+#c = #c + 1;
+$menu[#c] = "&d.Ruby式評価";
+$scrp[#c] = "ruby -e \"print eval(gets(nil));\" <con >con";
+
+#c = #c + 1;
+$menu[#c] = "\x01";
+
+#c = #c + 1;
+$menu[#c] = "&e.秀丸上でコマンド実行";
+$scrp[#c] = "ruby -e \"require 'nkf';cmd=gets(nil);buf=\\\"\\\";IO.popen(cmd, \\\"r+\\\") {|io| io.each_line {|line| buf+=line;}};puts cmd;print NKF.nkf('-W -s', buf);\" <con >con";
+
+
+menuarray $menu,#c+1;
+
+if( result == 0 ) {
+    endmacro;
+} 
+if (selecting == 0) {
+    message "対象となる箇所を選択してください";
+    endmacro;
+}
+run $scrp[result-1];
